@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Genre {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  animes AnimeGenre[]
+
+  @@map("genres")
+}
+
+model Anime {
+  id            String      @id @default(cuid())
+  title         String
+  slug          String      @unique
+  synopsis      String?     @db.Text
+  coverImage    String?
+  releaseYear   Int?
+  status        AnimeStatus @default(ONGOING)
+  rating        Float?
+  totalEpisodes Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  genres   AnimeGenre[]
+  episodes Episode[]
+
+  @@map("animes")
+}
+
+model AnimeGenre {
+  id      String @id @default(cuid())
+  animeId String
+  genreId String
+
+  anime Anime @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([animeId, genreId])
+  @@map("anime_genres")
+}
+
+model Episode {
+  id            String    @id @default(cuid())
+  animeId       String
+  episodeNumber Int
+  title         String?
+  description   String?   @db.Text
+  videoUrl      String?
+  duration      Int? // in seconds
+  releaseDate   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  anime Anime @relation(fields: [animeId], references: [id], onDelete: Cascade)
+
+  @@unique([animeId, episodeNumber])
+  @@map("episodes")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AnimeStatus {
+  ONGOING
+  COMPLETED
+  UPCOMING
+  HIATUS
+}
