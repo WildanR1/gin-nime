@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -20,46 +22,58 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    // Mock login - nanti akan diganti dengan NextAuth
-    setTimeout(() => {
-      if (email === "admin@ginanime.com" && password === "admin123") {
-        // Redirect to admin dashboard
-        window.location.href = "/admin/dashboard";
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Email atau password salah!");
       } else {
-        alert("Email atau password salah!");
+        router.push("/admin/dashboard");
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Terjadi kesalahan saat login");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center p-4">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('/api/placeholder/100/100')] opacity-5"></div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-slate-900/5"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/20 via-transparent to-transparent"></div>
 
       <div className="relative w-full max-w-md">
         {/* Back to Home */}
         <div className="mb-8">
           <Link
             href="/"
-            className="text-gray-400 hover:text-white transition-colors flex items-center"
+            className="text-muted-foreground hover:text-foreground transition-colors flex items-center group"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Kembali ke Beranda
           </Link>
         </div>
 
-        <Card className="bg-slate-800 border-slate-700 shadow-2xl">
+        <Card className="border shadow-xl backdrop-blur-sm">
           <CardHeader className="text-center pb-8">
-            <div className="mx-auto mb-4 w-16 h-16 bg-sky-600 rounded-full flex items-center justify-center">
+            <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center shadow-lg">
               <Lock className="w-8 h-8 text-white" />
             </div>
-            <div className="flex items-center justify-center space-x-2 mb-2">
+            <div className="flex items-center justify-center space-x-2 mb-4">
               <Image
                 src="/image/logo.png"
                 alt="GinAnime Logo"
@@ -67,55 +81,63 @@ export default function AdminLoginPage() {
                 height={32}
                 className="rounded"
               />
-              <span className="text-2xl font-bold text-white">
+              <span className="text-2xl font-bold text-foreground">
                 Gin<span className="text-sky-500">Anime</span>
               </span>
             </div>
-            <CardTitle className="text-2xl text-white">Admin Login</CardTitle>
-            <CardDescription className="text-gray-400">
-              Masuk ke panel administrasi GinAnime
+            <CardTitle className="text-2xl text-foreground">
+              Admin Panel
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Masuk ke dashboard administrasi
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="p-4 text-sm text-red-800 bg-red-50 border border-red-200 rounded-lg dark:text-red-400 dark:bg-red-900/30 dark:border-red-800">
+                  {error}
+                </div>
+              )}
+
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
+                <Label htmlFor="email" className="text-foreground">
                   Email
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="admin@ginanime.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-slate-700 border-slate-600 text-white placeholder-gray-400 focus:border-sky-500"
+                    className="pl-10"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-white">
+                <Label htmlFor="password" className="text-foreground">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Masukkan password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10 bg-slate-700 border-slate-600 text-white placeholder-gray-400 focus:border-sky-500"
+                    className="pl-10 pr-10"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="w-4 h-4" />
@@ -128,21 +150,22 @@ export default function AdminLoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-sky-600 hover:bg-sky-700 text-white"
+                className="w-full bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white shadow-lg"
                 disabled={isLoading}
+                size="lg"
               >
-                {isLoading ? "Memproses..." : "Masuk"}
+                {isLoading ? "Memproses..." : "Masuk ke Dashboard"}
               </Button>
             </form>
 
             {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-slate-700 rounded-lg">
-              <p className="text-gray-300 text-sm font-medium mb-2">
-                Demo Credentials:
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+              <p className="text-foreground text-sm font-medium mb-2">
+                💡 Demo Credentials:
               </p>
-              <div className="text-gray-400 text-xs space-y-1">
-                <p>Email: admin@ginanime.com</p>
-                <p>Password: admin123</p>
+              <div className="text-muted-foreground text-xs space-y-1">
+                <p className="font-mono">admin@ginanime.com</p>
+                <p className="font-mono">admin123</p>
               </div>
             </div>
           </CardContent>
@@ -150,8 +173,8 @@ export default function AdminLoginPage() {
 
         {/* Security Notice */}
         <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
-            Area ini khusus untuk administrator. Semua aktivitas akan dicatat.
+          <p className="text-muted-foreground text-sm">
+            🔒 Area khusus administrator. Semua aktivitas dicatat.
           </p>
         </div>
       </div>

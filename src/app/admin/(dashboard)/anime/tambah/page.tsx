@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { LogoutButton } from "@/components/admin/logout-button";
 import {
   Card,
   CardContent,
@@ -22,15 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import {
-  ArrowLeft,
-  Upload,
-  X,
-  Plus,
-  Settings,
-  LogOut,
-  Save,
-} from "lucide-react";
+import { ArrowLeft, Upload, X, Plus, Settings, Save } from "lucide-react";
 
 export default function AddAnimePage() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -141,16 +134,7 @@ export default function AddAnimePage() {
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </Button>
-              <Link href="/">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
-              </Link>
+              <LogoutButton />
             </div>
           </div>
         </div>
