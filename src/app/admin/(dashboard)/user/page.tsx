@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { PrismaClient } from "@/generated/prisma-client";
@@ -17,10 +16,13 @@ import {
   Plus,
   Edit,
   Trash2,
-  Users,
-  Shield,
+  Eye,
   Calendar,
-  Mail,
+  Filter,
+  Users,
+  Crown,
+  Shield,
+  UserCheck,
 } from "lucide-react";
 
 const prisma = new PrismaClient();
@@ -41,53 +43,48 @@ export default async function UserManagementPage() {
   const userList = await getUserList();
 
   return (
-    <div className="space-y-8">
-      {/* Enhanced Header with Gradient */}
-      <div className="relative border-b pb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-purple-500/5 to-sky-500/10 rounded-lg -mx-4 -mt-4"></div>
-        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-400 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500/20 to-purple-600/20 flex items-center justify-center ring-1 ring-orange-500/30">
-                <Users className="h-5 w-5 text-orange-500" />
-              </div>
-              Kelola User
-            </h1>
-            <p className="text-muted-foreground">
-              Mengelola pengguna yang terdaftar di platform
-            </p>
-          </div>
-          <Link href="/admin/user/tambah">
-            <Button className="bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 border-0 shadow-lg shadow-orange-500/25">
-              <Plus className="w-4 h-4 mr-2" />
-              Tambah User
-            </Button>
-          </Link>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            Kelola Pengguna
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400">
+            Mengelola pengguna yang terdaftar di platform GinAnime
+          </p>
         </div>
+        <Button className="bg-sky-500 hover:bg-sky-600 text-white">
+          <Plus className="w-4 h-4 mr-2" />
+          Tambah Pengguna
+        </Button>
       </div>
 
-      {/* Enhanced Search and Filters */}
-      <Card className="border-orange-500/20 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent rounded-lg"></div>
-        <CardContent className="p-6 relative">
+      {/* Search and Filters */}
+      <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+        <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <Input
-                placeholder="Cari user berdasarkan nama atau email..."
-                className="pl-10 border-orange-500/30 focus:border-orange-500 focus:ring-orange-500/20"
+                placeholder="Cari pengguna berdasarkan nama atau email..."
+                className="pl-10 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
               />
             </div>
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="border-orange-500/30 hover:bg-orange-500/10"
+                className="border-slate-200 dark:border-slate-700"
               >
-                <Shield className="w-4 h-4 mr-2" />
+                <Filter className="w-4 h-4 mr-2" />
                 Filter Role
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-slate-200 dark:border-slate-700"
+              >
                 <Calendar className="w-4 h-4 mr-2" />
                 Filter Tanggal
               </Button>
@@ -96,117 +93,147 @@ export default async function UserManagementPage() {
         </CardContent>
       </Card>
 
-      {/* User Table or Empty State */}
-      <Card>
+      {/* User Table */}
+      <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
         <CardHeader>
-          <CardTitle>Daftar User ({userList.length})</CardTitle>
-          <CardDescription>
-            Kelola pengguna yang terdaftar di platform
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
+                  <Users className="h-4 w-4 text-white" />
+                </div>
+                Daftar Pengguna ({userList.length})
+              </CardTitle>
+              <CardDescription className="text-slate-600 dark:text-slate-400">
+                Kelola pengguna yang terdaftar di platform
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className={userList.length === 0 ? "p-6" : "p-0"}>
+        <CardContent>
           {userList.length === 0 ? (
-            // Empty State
             <div className="text-center py-12">
-              <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Belum ada user</h3>
-              <p className="text-muted-foreground mb-6">
+              <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-slate-400" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-slate-900 dark:text-white">
+                Belum ada pengguna
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 mb-6">
                 Belum ada pengguna yang terdaftar di platform.
               </p>
-              <Link href="/admin/user/tambah">
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Tambah User Pertama
-                </Button>
-              </Link>
+              <Button className="bg-sky-500 hover:bg-sky-600 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Tambah Pengguna
+              </Button>
             </div>
           ) : (
-            // Data Table
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-muted">
-                  <tr>
-                    <th className="text-left p-4 font-medium">User</th>
-                    <th className="text-left p-4 font-medium">Email</th>
-                    <th className="text-left p-4 font-medium">Role</th>
-                    <th className="text-left p-4 font-medium">Bergabung</th>
-                    <th className="text-left p-4 font-medium">Aksi</th>
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-slate-700">
+                    <th className="text-left p-4 font-medium text-slate-600 dark:text-slate-300">Pengguna</th>
+                    <th className="text-left p-4 font-medium text-slate-600 dark:text-slate-300">Email</th>
+                    <th className="text-left p-4 font-medium text-slate-600 dark:text-slate-300">Role</th>
+                    <th className="text-left p-4 font-medium text-slate-600 dark:text-slate-300">Status</th>
+                    <th className="text-left p-4 font-medium text-slate-600 dark:text-slate-300">Bergabung</th>
+                    <th className="text-left p-4 font-medium text-slate-600 dark:text-slate-300">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {userList.map((user, index) => (
                     <tr
                       key={user.id}
-                      className={`border-b hover:bg-muted/50 ${
-                        index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                      className={`border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
+                        index % 2 === 0 ? "bg-white dark:bg-slate-800" : "bg-slate-50/50 dark:bg-slate-700/20"
                       }`}
                     >
                       <td className="p-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-sky-500 rounded-full flex items-center justify-center text-white font-medium">
-                            {user.name?.charAt(0).toUpperCase() ||
-                              user.email?.charAt(0).toUpperCase()}
+                          <div className="w-10 h-10 bg-sky-100 dark:bg-sky-900/20 rounded-full flex items-center justify-center">
+                            <span className="text-sky-600 dark:text-sky-400 font-semibold text-sm">
+                              {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                            </span>
                           </div>
-                          <div>
-                            <h3 className="font-medium">
-                              {user.name || "Tidak ada nama"}
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-medium text-slate-900 dark:text-white truncate">
+                              {user.name || "Tanpa Nama"}
                             </h3>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
                               ID: {user.id.slice(0, 8)}...
                             </p>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center">
-                          <Mail className="w-4 h-4 text-muted-foreground mr-2" />
-                          <span className="text-sm">{user.email}</span>
-                        </div>
+                        <span className="text-slate-900 dark:text-white">
+                          {user.email}
+                        </span>
                       </td>
                       <td className="p-4">
                         <Badge
-                          variant={
-                            user.role === "ADMIN" ? "default" : "secondary"
-                          }
                           className={
-                            user.role === "ADMIN" ? "bg-red-500 text-white" : ""
+                            user.role === "ADMIN"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300"
+                              : "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
                           }
                         >
-                          {user.role}
+                          {user.role === "ADMIN" ? (
+                            <>
+                              <Crown className="w-3 h-3 mr-1" />
+                              Admin
+                            </>
+                          ) : (
+                            <>
+                              <Shield className="w-3 h-3 mr-1" />
+                              User
+                            </>
+                          )}
                         </Badge>
                       </td>
                       <td className="p-4">
-                        <span className="text-muted-foreground text-sm">
-                          {new Date(user.createdAt).toLocaleDateString(
-                            "id-ID",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            }
-                          )}
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300">
+                          <UserCheck className="w-3 h-3 mr-1" />
+                          Aktif
+                        </Badge>
+                      </td>
+                      <td className="p-4">
+                        <span className="text-slate-600 dark:text-slate-300">
+                          {new Date(user.createdAt).toLocaleDateString("id-ID", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </span>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center space-x-2">
-                          <Link href={`/admin/user/edit/${user.id}`}>
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                          </Link>
-                          <Button
-                            size="sm"
+                          <Button 
+                            size="sm" 
                             variant="outline"
-                            className="text-red-600 hover:text-red-500"
-                            disabled={user.id === session.user?.id}
-                            title={
-                              user.id === session.user?.id
-                                ? "Tidak dapat menghapus akun sendiri"
-                                : "Hapus user"
-                            }
+                            className="h-8 w-8 p-0 border-slate-200 dark:border-slate-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                            title="Lihat Detail"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Eye className="w-4 h-4" />
                           </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            className="h-8 w-8 p-0 border-slate-200 dark:border-slate-600 hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                            title="Edit Pengguna"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          {user.role !== "ADMIN" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 w-8 p-0 border-red-200 dark:border-red-800 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              title="Hapus Pengguna"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -218,42 +245,77 @@ export default async function UserManagementPage() {
         </CardContent>
       </Card>
 
-      {/* User Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total User</CardTitle>
-            <Users className="h-4 w-4 text-sky-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userList.length}</div>
-            <p className="text-xs text-muted-foreground">pengguna terdaftar</p>
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Total Pengguna
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {userList.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-sky-500 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Admin</CardTitle>
-            <Shield className="h-4 w-4 text-red-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {userList.filter((user) => user.role === "ADMIN").length}
+        <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Admin
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {userList.filter(user => user.role === "ADMIN").length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
+                <Crown className="w-6 h-6 text-white" />
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">admin aktif</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">User Biasa</CardTitle>
-            <Users className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {userList.filter((user) => user.role === "USER").length}
+        <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  User Biasa
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {userList.filter(user => user.role === "USER").length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">user biasa</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Pengguna Aktif
+                </p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {userList.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                <UserCheck className="w-6 h-6 text-white" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

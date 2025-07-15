@@ -73,75 +73,61 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar variant="inset" collapsible="icon" className="border-r-sky-500/20">
-      <SidebarHeader className="border-b border-sky-500/20">
+    <Sidebar
+      variant="inset"
+      collapsible="icon"
+      className="border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900 rounded-r-lg"
+    >
+      <SidebarHeader className="border-b border-slate-200 dark:border-slate-700 p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/admin/dashboard" className="group">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500/20 to-blue-600/20 text-sidebar-primary-foreground ring-1 ring-sky-500/30">
-                  <Image
-                    src="/image/logo.png"
-                    alt="GinAnime Logo"
-                    width={24}
-                    height={24}
-                    className="rounded transition-all group-hover:scale-110"
-                  />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent">
+              <Link
+                href="/admin/dashboard"
+                className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg p-2"
+              >
+                <Image
+                  src="/image/logo.png"
+                  alt="GinAnime Logo"
+                  width={32}
+                  height={32}
+                  className="rounded"
+                />
+                <div className="group-data-[collapsible=icon]:hidden">
+                  <div className="font-semibold text-slate-900 dark:text-white">
                     GinAnime
-                  </span>
-                  <span className="truncate text-xs text-muted-foreground">
+                  </div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
                     Admin Panel
-                  </span>
+                  </div>
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sky-600 font-medium">
+      <SidebarContent className="p-4">
+        <SidebarGroup className="mb-6">
+          <SidebarGroupLabel className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 font-semibold mb-3 group-data-[collapsible=icon]:hidden">
             Menu Utama
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.url}
-                    className="group"
-                  >
-                    <Link
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                    <Link 
                       href={item.url}
                       className={`
-                      transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/10 hover:to-blue-500/10
-                      ${
-                        pathname === item.url
-                          ? "bg-gradient-to-r from-sky-500/10 to-blue-500/10 border-r-2 border-sky-500"
-                          : ""
-                      }
-                    `}
+                        flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                        ${pathname === item.url 
+                          ? "bg-sky-500 text-white shadow-sm" 
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        }
+                      `}
                     >
-                      <item.icon
-                        className={`transition-colors ${
-                          pathname === item.url
-                            ? "text-sky-500"
-                            : "group-hover:text-sky-500"
-                        }`}
-                      />
-                      <span
-                        className={`transition-colors ${
-                          pathname === item.url
-                            ? "text-sky-600 font-medium"
-                            : "group-hover:text-sky-600"
-                        }`}
-                      >
-                        {item.title}
-                      </span>
+                      <item.icon className="w-5 h-5" />
+                      <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -149,17 +135,27 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarGroup>
-          <SidebarGroupLabel className="text-purple-600 font-medium">
+          <SidebarGroupLabel className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 font-semibold mb-3 group-data-[collapsible=icon]:hidden">
             Pengaturan
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url}>
-                      <item.icon />
+                    <Link 
+                      href={item.url}
+                      className={`
+                        flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                        ${pathname === item.url 
+                          ? "bg-sky-500 text-white shadow-sm" 
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        }
+                      `}
+                    >
+                      <item.icon className="w-5 h-5" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -169,45 +165,42 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sky-500/20">
+      <SidebarFooter className="border-t border-slate-200 dark:border-slate-700">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="data-[state=open]:bg-gradient-to-r data-[state=open]:from-sky-500/10 data-[state=open]:to-blue-500/10 hover:bg-gradient-to-r hover:from-sky-500/10 hover:to-blue-500/10 group"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
-                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500/20 to-blue-600/20 flex items-center justify-center ring-1 ring-sky-500/30">
-                    <User2 className="h-4 w-4 text-sky-500" />
+                  <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
+                    <User2 className="h-4 w-4 text-white" />
                   </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold text-sky-600">
+                  <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                    <span className="truncate font-semibold">
                       Administrator
                     </span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      admin@ginanime.com
-                    </span>
+                    <span className="truncate text-xs">admin@ginanime.com</span>
                   </div>
-                  <ChevronUp className="ml-auto size-4 text-sky-500" />
+                  <ChevronUp className="ml-auto size-4 group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg border-sky-500/20"
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                 side="bottom"
                 align="end"
                 sideOffset={4}
               >
-                <DropdownMenuItem className="hover:bg-sky-500/10">
-                  <Settings className="mr-2 h-4 w-4 text-sky-500" />
-                  <span>Pengaturan Akun</span>
+                <DropdownMenuItem>
+                  <Settings />
+                  Pengaturan Akun
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="text-red-600 hover:bg-red-500/10"
                   onClick={() => signOut({ callbackUrl: "/admin/login" })}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Logout</span>
+                  <LogOut />
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

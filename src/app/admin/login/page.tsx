@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Enhanced Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/10 via-blue-500/5 to-purple-500/10"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-500/10 to-slate-800/20"></div>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/10 via-transparent to-transparent"></div>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-400/10 via-transparent to-transparent"></div>
 

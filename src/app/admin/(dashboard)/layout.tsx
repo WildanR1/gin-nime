@@ -26,31 +26,35 @@ export default async function AdminDashboardLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <SidebarInset>
-        {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 via-transparent to-slate-900/5 pointer-events-none"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/10 via-transparent to-transparent pointer-events-none"></div>
-
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b backdrop-blur-sm relative z-10">
+      <SidebarInset className="bg-slate-50 dark:bg-slate-900">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
           <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
+            <SidebarTrigger className="-ml-1 text-slate-600 dark:text-slate-300" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 h-4 bg-slate-200 dark:bg-slate-700"
+            />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">
+                  <BreadcrumbLink
+                    href="/admin/dashboard"
+                    className="text-slate-600 dark:text-slate-300 hover:text-sky-500"
+                  >
                     Dashboard
                   </BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbSeparator className="hidden md:block text-slate-400" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Admin Panel</BreadcrumbPage>
+                  <BreadcrumbPage className="text-slate-900 dark:text-white font-medium">
+                    Admin Panel
+                  </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 relative z-10">
+        <div className="flex flex-1 flex-col p-6 bg-slate-50 dark:bg-slate-900">
           {children}
         </div>
       </SidebarInset>
