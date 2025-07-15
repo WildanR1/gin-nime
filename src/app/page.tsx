@@ -76,7 +76,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-slate-800">
       {/* Navigation */}
       <nav className="bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,60 +94,139 @@ export default function HomePage() {
                   Gin<span className="text-sky-500">Anime</span>
                 </span>
               </Link>
-              <div className="hidden md:flex space-x-6">
+            </div>
+
+            <div className="flex items-center space-x-6">
+              {/* Main Navigation Links */}
+              <div className="hidden md:flex space-x-8">
+                <Link
+                  href="/"
+                  className="text-white font-medium hover:text-sky-400 transition-colors"
+                >
+                  Home
+                </Link>
                 <Link
                   href="/anime"
                   className="text-gray-300 hover:text-sky-400 transition-colors"
                 >
-                  Daftar Anime
+                  Anime
                 </Link>
                 <Link
-                  href="/genre/action"
+                  href="/ongoing"
+                  className="text-gray-300 hover:text-sky-400 transition-colors"
+                >
+                  Ongoing
+                </Link>
+                <Link
+                  href="/jadwal-rilis"
+                  className="text-gray-300 hover:text-sky-400 transition-colors"
+                >
+                  Jadwal Rilis
+                </Link>
+                <Link
+                  href="/genre"
                   className="text-gray-300 hover:text-sky-400 transition-colors"
                 >
                   Genre
                 </Link>
               </div>
-            </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Cari anime..."
-                  className="bg-slate-800/80 text-white pl-10 pr-4 py-2 rounded-lg border border-slate-600/50 focus:border-sky-500 focus:outline-none w-64 transition-colors"
-                />
-              </div>
+              {/* Search Icon */}
+              <button className="p-2 text-gray-300 hover:text-sky-400 transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-96 bg-gradient-to-r from-sky-600 to-blue-700 flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4">
-              Selamat Datang di <span className="text-sky-300">GinAnime</span>
-            </h1>
-            <p className="text-xl mb-8 text-sky-100">
-              Nikmati koleksi anime terbaru dan terlengkap dengan kualitas HD
-            </p>
-            <Link href="/anime">
-              <Button
-                size="lg"
-                className="bg-white text-sky-600 hover:bg-sky-50 shadow-lg"
-              >
-                <Play className="mr-2 w-5 h-5" />
-                Mulai Menonton
-              </Button>
-            </Link>
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        {/* Background with hero image - only on large screens and positioned on right */}
+        <div className="absolute inset-0 hidden lg:block">
+          {/* Image positioned on right 50% */}
+          <div className="absolute top-0 right-0 w-1/2 h-full">
+            <Image
+              src="/image/hero-image.webp"
+              alt="Anime Hero Background"
+              fill
+              className="object-cover object-center"
+              priority
+            />
+          </div>
+          {/* Gradient overlays for blend effect with very smooth transitions */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900 from-25% via-slate-900/80 via-60% to-slate-900/15 to-85%"></div>
+          {/* Super smooth separator gradient with extended transition */}
+          <div className="absolute top-0 left-0 w-4/5 h-full bg-gradient-to-r from-slate-900 from-0% via-slate-900 via-65% to-transparent to-100%"></div>
+          {/* Very gentle overlay on image area */}
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-transparent from-0% via-slate-900/5 via-40% to-slate-900/20 to-90%"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/8 from-0% via-transparent via-50% to-slate-900/20 to-100%"></div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="min-h-[85vh] flex items-center py-12">
+            {/* Content Container - takes full width on mobile, left half on desktop */}
+            <div className="w-full lg:w-1/2 space-y-8">
+              {/* Brand Title */}
+              <div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
+                  Gin<span className="text-sky-400">Anime</span>
+                </h1>
+
+                {/* Search Bar */}
+                <div className="flex max-w-xl mb-8">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      placeholder="Cari anime favorit Anda..."
+                      className="w-full h-14 pl-6 pr-4 text-lg bg-black/30 backdrop-blur-md border border-white/20 rounded-l-xl text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent shadow-xl"
+                    />
+                  </div>
+                  <Button
+                    size="lg"
+                    className="h-14 px-8 bg-sky-500 hover:bg-sky-600 border-0 rounded-l-none rounded-r-xl shadow-xl"
+                  >
+                    <Search className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Brand Description */}
+              <div className="space-y-4">
+                <p className="text-white text-lg leading-relaxed drop-shadow-lg">
+                  Selamat datang di{" "}
+                  <span className="text-sky-400 font-semibold">GinAnime</span>,
+                  platform streaming anime terdepan yang menghadirkan koleksi
+                  anime terlengkap dengan kualitas HD terbaik.
+                </p>
+                <p className="text-white/90 text-base leading-relaxed drop-shadow-lg">
+                  Nikmati ribuan episode anime dari berbagai genre, mulai dari
+                  action, romance, comedy, hingga thriller. Tonton anime favorit
+                  Anda kapan saja, di mana saja, tanpa iklan yang mengganggu.
+                </p>
+              </div>
+
+              {/* CTA Button */}
+              <div>
+                <Link href="/anime">
+                  <Button
+                    size="lg"
+                    className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-8 py-4 text-lg rounded-xl shadow-xl border-0 transition-all duration-300 hover:scale-105"
+                  >
+                    <Play className="mr-2 w-5 h-5" />
+                    Mulai Menonton
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Bottom gradient for smooth transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-800 to-transparent"></div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {/* Featured Anime */}
         <section className="mb-12">
           <h2 className="text-3xl font-bold text-white mb-8">Anime Unggulan</h2>

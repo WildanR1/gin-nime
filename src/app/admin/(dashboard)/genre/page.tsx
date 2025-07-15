@@ -38,11 +38,15 @@ export default async function GenreManagementPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="border-b pb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Enhanced Header with Gradient */}
+      <div className="relative border-b pb-6">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-sky-500/10 rounded-lg -mx-4 -mt-4"></div>
+        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-400 to-blue-600 bg-clip-text text-transparent flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500/20 to-blue-600/20 flex items-center justify-center ring-1 ring-purple-500/30">
+                <Tags className="h-5 w-5 text-purple-500" />
+              </div>
               Kelola Genre
             </h1>
             <p className="text-muted-foreground">
@@ -50,7 +54,7 @@ export default async function GenreManagementPage() {
             </p>
           </div>
           <Link href="/admin/genre/tambah">
-            <Button>
+            <Button className="bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 border-0 shadow-lg shadow-purple-500/25">
               <Plus className="w-4 h-4 mr-2" />
               Tambah Genre
             </Button>
@@ -58,25 +62,32 @@ export default async function GenreManagementPage() {
         </div>
       </div>
 
-      {/* Search */}
-      <Card>
-        <CardContent className="p-6">
+      {/* Enhanced Search */}
+      <Card className="border-purple-500/20 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent rounded-lg"></div>
+        <CardContent className="p-6 relative">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-500 w-4 h-4" />
               <Input
                 placeholder="Cari genre berdasarkan nama..."
-                className="pl-10"
+                className="pl-10 border-purple-500/30 focus:border-purple-500 focus:ring-purple-500/20"
               />
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Genre List or Empty State */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Daftar Genre ({genreList.length})</CardTitle>
+      {/* Enhanced Genre List */}
+      <Card className="border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-lg"></div>
+        <CardHeader className="relative">
+          <CardTitle className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center">
+              <Tags className="h-4 w-4 text-blue-500" />
+            </div>
+            Daftar Genre ({genreList.length})
+          </CardTitle>
           <CardDescription>
             Kelola genre yang tersedia di platform
           </CardDescription>

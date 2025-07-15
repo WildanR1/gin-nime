@@ -165,3 +165,134 @@
   box-shadow: 0 0 0 2px oklch(0.7 0.14 199.4),
     /* sky-500 */ 0 0 0 4px oklch(0.14 0.004 285.86); /* slate-900 offset */
 }
+
+/* Enhanced Admin UI Styles */
+.admin-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    oklch(0.14 0.004 285.86) 0%,
+    oklch(0.16 0.012 240) 25%,
+    oklch(0.18 0.008 260) 50%,
+    oklch(0.16 0.012 240) 75%,
+    oklch(0.14 0.004 285.86) 100%
+  );
+}
+
+.admin-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.25);
+}
+
+.admin-gradient-text {
+  background: linear-gradient(45deg, #0ea5e9, #3b82f6);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-sidebar-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-sidebar-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.1),
+    transparent
+  );
+  transition: left 0.6s;
+}
+
+.admin-sidebar-item:hover::before {
+  left: 100%;
+}
+
+.admin-pulse {
+  animation: admin-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes admin-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.admin-float {
+  animation: admin-float 6s ease-in-out infinite;
+}
+
+@keyframes admin-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Enhanced button hover effects */
+.admin-button-gradient {
+  background: linear-gradient(45deg, #0ea5e9, #3b82f6);
+  background-size: 200% 200%;
+  animation: admin-gradient-shift 3s ease infinite;
+}
+
+@keyframes admin-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Enhanced loading states */
+.admin-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: admin-shimmer 1.5s infinite;
+}
+
+@keyframes admin-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}

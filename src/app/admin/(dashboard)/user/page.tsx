@@ -42,11 +42,15 @@ export default async function UserManagementPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="border-b pb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Enhanced Header with Gradient */}
+      <div className="relative border-b pb-6">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-purple-500/5 to-sky-500/10 rounded-lg -mx-4 -mt-4"></div>
+        <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-400 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-orange-500/20 to-purple-600/20 flex items-center justify-center ring-1 ring-orange-500/30">
+                <Users className="h-5 w-5 text-orange-500" />
+              </div>
               Kelola User
             </h1>
             <p className="text-muted-foreground">
@@ -54,7 +58,7 @@ export default async function UserManagementPage() {
             </p>
           </div>
           <Link href="/admin/user/tambah">
-            <Button>
+            <Button className="bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 border-0 shadow-lg shadow-orange-500/25">
               <Plus className="w-4 h-4 mr-2" />
               Tambah User
             </Button>
@@ -62,19 +66,24 @@ export default async function UserManagementPage() {
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="p-6">
+      {/* Enhanced Search and Filters */}
+      <Card className="border-orange-500/20 hover:shadow-lg hover:shadow-orange-500/10 transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent rounded-lg"></div>
+        <CardContent className="p-6 relative">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 w-4 h-4" />
               <Input
                 placeholder="Cari user berdasarkan nama atau email..."
-                className="pl-10"
+                className="pl-10 border-orange-500/30 focus:border-orange-500 focus:ring-orange-500/20"
               />
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-orange-500/30 hover:bg-orange-500/10"
+              >
                 <Shield className="w-4 h-4 mr-2" />
                 Filter Role
               </Button>
