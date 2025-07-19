@@ -46,7 +46,7 @@ export function NavMain({
                   defaultOpen={pathname.startsWith(item.url)}
                   className="group/collapsible"
                 >
-                  <CollapsibleTrigger asChild>
+                  <CollapsibleTrigger asChild className="cursor-pointer">
                     <SidebarMenuButton
                       tooltip={item.title}
                       className={`

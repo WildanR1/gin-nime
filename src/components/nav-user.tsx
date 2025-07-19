@@ -28,7 +28,7 @@ export function NavUser({
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="cursor-pointer">
             <SidebarMenuButton
               size="lg"
               className="transition-all duration-200 relative overflow-hidden rounded-lg hover:bg-slate-800/70 data-[state=open]:bg-slate-800/80 data-[state=open]:text-white data-[state=open]:hover:bg-slate-800/90"
@@ -57,13 +57,13 @@ export function NavUser({
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuItem className="hover:bg-slate-700 text-slate-200 hover:text-white transition-colors duration-200">
+            <DropdownMenuItem className="hover:bg-slate-700 text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               Pengaturan Akun
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: "/admin/login" })}
-              className="hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors duration-200"
+              className="hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors duration-200 cursor-pointer"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Logout

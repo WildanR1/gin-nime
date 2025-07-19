@@ -86,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {...props}
     >
       {/* Header dengan animasi */}
-      <SidebarHeader className="bg-slate-900 border-b border-slate-700/50">
+      <SidebarHeader className="bg-slate-900">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
