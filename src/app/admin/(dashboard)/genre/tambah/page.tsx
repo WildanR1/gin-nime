@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { createGenreRHF } from "@/actions/genre";
+import { createGenreSchema } from "@/lib/validations/genre";
+import type { CreateGenreInput } from "@/lib/validations/genre";
 import {
   Card,
   CardContent,
@@ -14,99 +19,71 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Save, Tags } from "lucide-react";
+import { Save, Tags } from "lucide-react";
 
 export default function AddGenrePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<CreateGenreInput>({
+    resolver: zodResolver(createGenreSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
   });
 
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.name.trim()) {
-      alert("Nama genre tidak boleh kosong");
-      return;
-    }
-
-    if (formData.name.trim().length < 2) {
-      alert("Nama genre minimal 2 karakter");
-      return;
-    }
-
+  const onSubmit = async (data: CreateGenreInput) => {
     setIsLoading(true);
 
     try {
-      const slug = generateSlug(formData.name);
+      const result = await createGenreRHF(data);
 
-      const response = await fetch("/api/admin/genres", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name.trim(),
-          slug: slug,
-          description: formData.description.trim() || null,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Gagal menambahkan genre");
+      if (!result.success) {
+        if (result.errors) {
+          // Set field-specific errors
+          Object.entries(result.errors).forEach(([field, message]) => {
+            setError(field as keyof CreateGenreInput, {
+              type: "server",
+              message,
+            });
+          });
+        }
+        toast.error("Gagal menambahkan genre", {
+          description: result.message,
+        });
+      } else {
+        toast.success("Genre berhasil ditambahkan", {
+          description: `Genre "${data.name}" telah ditambahkan ke sistem.`,
+        });
+        // Redirect on success
+        router.push("/admin/genre");
       }
-
-      router.push("/admin/genre");
-      router.refresh();
     } catch (error) {
       console.error("Error:", error);
-      alert(error instanceof Error ? error.message : "Terjadi kesalahan");
+      toast.error("Terjadi kesalahan yang tidak terduga", {
+        description: "Silakan coba lagi atau hubungi administrator.",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center gap-4">
-        <Link href="/admin/genre">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Kembali
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Tambah Genre Baru
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400">
-            Menambahkan kategori genre baru untuk anime
-          </p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          Tambah Genre Baru
+        </h1>
+        <p className="text-slate-600 dark:text-slate-400">
+          Menambahkan kategori genre baru untuk anime
+        </p>
       </div>
 
       {/* Form Card */}
@@ -123,48 +100,57 @@ export default function AddGenrePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Nama Genre */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-slate-900 dark:text-white font-medium">
+              <Label
+                htmlFor="name"
+                className="text-slate-900 dark:text-white font-medium"
+              >
                 Nama Genre *
               </Label>
               <Input
                 id="name"
-                name="name"
                 type="text"
-                value={formData.name}
-                onChange={handleInputChange}
                 placeholder="Contoh: Action, Romance, Comedy"
-                required
-                className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+                className={`border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 ${
+                  errors.name ? "border-red-500" : ""
+                }`}
+                {...register("name")}
               />
+              {errors.name && (
+                <p className="text-red-600 dark:text-red-400 text-sm">
+                  {errors.name.message}
+                </p>
+              )}
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Nama genre akan otomatis dikonversi menjadi slug URL
-                {formData.name && (
-                  <span className="block mt-1 font-mono text-sky-600 dark:text-sky-400">
-                    Slug: {generateSlug(formData.name)}
-                  </span>
-                )}
               </p>
             </div>
 
             {/* Deskripsi */}
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-slate-900 dark:text-white font-medium">
+              <Label
+                htmlFor="description"
+                className="text-slate-900 dark:text-white font-medium"
+              >
                 Deskripsi (Opsional)
               </Label>
               <Textarea
                 id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
                 placeholder="Jelaskan karakteristik dari genre ini..."
                 rows={4}
                 className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 resize-none"
+                {...register("description")}
               />
+              {errors.description && (
+                <p className="text-red-600 dark:text-red-400 text-sm">
+                  {errors.description.message}
+                </p>
+              )}
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Berikan deskripsi singkat tentang genre ini untuk membantu pengguna memahami karakteristiknya
+                Berikan deskripsi singkat tentang genre ini untuk membantu
+                pengguna memahami karakteristiknya
               </p>
             </div>
 
@@ -172,7 +158,7 @@ export default function AddGenrePage() {
             <div className="flex items-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
               <Button
                 type="submit"
-                disabled={isLoading || !formData.name.trim()}
+                disabled={isLoading}
                 className="bg-sky-500 hover:bg-sky-600 text-white"
               >
                 {isLoading ? (
@@ -187,15 +173,14 @@ export default function AddGenrePage() {
                   </>
                 )}
               </Button>
-              <Link href="/admin/genre">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  className="border-slate-200 dark:border-slate-700"
-                >
-                  Batal
-                </Button>
-              </Link>
+              <Button
+                type="button"
+                variant="outline"
+                className="border-slate-200 dark:border-slate-700"
+                onClick={() => router.push("/admin/genre")}
+              >
+                Batal
+              </Button>
             </div>
           </form>
         </CardContent>
@@ -216,11 +201,15 @@ export default function AddGenrePage() {
             </li>
             <li className="flex items-start gap-2">
               <div className="w-1.5 h-1.5 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
-              <span>Pastikan genre belum ada sebelumnya untuk menghindari duplikat</span>
+              <span>
+                Pastikan genre belum ada sebelumnya untuk menghindari duplikat
+              </span>
             </li>
             <li className="flex items-start gap-2">
               <div className="w-1.5 h-1.5 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
-              <span>Deskripsi membantu pengguna memahami karakteristik genre</span>
+              <span>
+                Deskripsi membantu pengguna memahami karakteristik genre
+              </span>
             </li>
             <li className="flex items-start gap-2">
               <div className="w-1.5 h-1.5 bg-sky-500 rounded-full mt-2 flex-shrink-0" />
