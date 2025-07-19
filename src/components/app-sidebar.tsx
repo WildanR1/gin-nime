@@ -1,23 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import {
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  LifeBuoy,
-  Map,
-  PieChart,
-  Send,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+import * as React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { Home, Film, Tags, Users, Settings2 } from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -26,160 +16,115 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+const navigationData = {
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: Home,
+    },
+    {
+      title: "Kelola Anime",
+      url: "/admin/anime",
+      icon: Film,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Daftar Anime",
+          url: "/admin/anime",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "Tambah Anime",
+          url: "/admin/anime/tambah",
         },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
+      title: "Kelola Genre",
+      url: "/admin/genre",
+      icon: Tags,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "Daftar Genre",
+          url: "/admin/genre",
         },
         {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "Tambah Genre",
+          url: "/admin/genre/tambah",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
+      title: "Kelola Users",
+      url: "/admin/user",
+      icon: Users,
     },
     {
-      title: "Settings",
-      url: "#",
+      title: "Pengaturan",
+      url: "/admin/settings",
       icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
     },
   ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession();
+
+  // Default user data dengan fallback jika session tidak ada
+  const userData = {
+    name: session?.user?.name || "Administrator",
+    email: session?.user?.email || "admin@ginanime.com",
+    avatar: session?.user?.image || "/avatars/admin.jpg",
+  };
+
   return (
-    <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      variant="inset"
+      className="bg-slate-900 border-slate-700 transition-all duration-300 ease-in-out"
+      {...props}
+    >
+      {/* Header dengan animasi */}
+      <SidebarHeader className="bg-slate-900 border-b border-slate-700/50">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className="hover:bg-slate-800/50 data-[state=open]:bg-slate-800/70 data-[state=open]:hover:bg-slate-800/80"
+            >
+              <Link href="/admin/dashboard">
+                <Image
+                  src="/image/logo.png"
+                  alt="GinAnime Logo"
+                  width={32}
+                  height={32}
+                  className="transition-transform duration-200 hover:scale-110"
+                />
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-semibold text-white">
+                    Gin<span className="text-sky-400">Anime</span>
+                  </span>
+                  <span className="truncate text-xs text-slate-400">
+                    Admin Panel
+                  </span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+
+      {/* Content dengan animasi menggunakan NavMain */}
+      <SidebarContent className="bg-slate-900">
+        <NavMain items={navigationData.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
+
+      {/* Footer dengan user menu menggunakan NavUser */}
+      <SidebarFooter className="bg-slate-900 border-t border-slate-700/50">
+        <NavUser user={userData} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
