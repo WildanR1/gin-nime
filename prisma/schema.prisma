@@ -35,6 +35,22 @@ model Genre {
   @@map("genres")
 }
 
+model AnimeType {
+  id     String  @id @default(cuid())
+  name   String  @unique // TV, Movie, ONA, OVA, Special
+  animes Anime[]
+
+  @@map("anime_types")
+}
+
+model Studio {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  animes Anime[]
+
+  @@map("studios")
+}
+
 model Anime {
   id            String      @id @default(cuid())
   title         String
@@ -45,8 +61,15 @@ model Anime {
   status        AnimeStatus @default(ONGOING)
   rating        Float?
   totalEpisodes Int?
+  duration      Int? // Duration per episode in minutes
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  // Relations
+  animeTypeId String?
+  animeType   AnimeType? @relation(fields: [animeTypeId], references: [id])
+  studioId    String?
+  studio      Studio?    @relation(fields: [studioId], references: [id])
 
   genres   AnimeGenre[]
   episodes Episode[]
@@ -72,16 +95,28 @@ model Episode {
   episodeNumber Int
   title         String?
   description   String?   @db.Text
-  videoUrl      String?
+  thumbnail     String? // Episode thumbnail
   duration      Int? // in seconds
   releaseDate   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  anime Anime @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  anime   Anime           @relation(fields: [animeId], references: [id], onDelete: Cascade)
+  servers EpisodeServer[]
 
   @@unique([animeId, episodeNumber])
   @@map("episodes")
+}
+
+model EpisodeServer {
+  id        String  @id @default(cuid())
+  name      String // "HD-1", "HD-2", etc.
+  videoUrl  String
+  quality   String // "720p", "1080p", "480p"
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@map("episode_servers")
 }
 
 enum Role {
