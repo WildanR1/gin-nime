@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Home, Film, Tags, Users, Settings2 } from "lucide-react";
+import { Home, Film, Tags, Users, Settings2, Tv, Building } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -52,6 +52,36 @@ const navigationData = {
         {
           title: "Tambah Genre",
           url: "/admin/genre/tambah",
+        },
+      ],
+    },
+    {
+      title: "Tipe Anime",
+      url: "/admin/anime-type",
+      icon: Tv,
+      items: [
+        {
+          title: "Daftar Tipe",
+          url: "/admin/anime-type",
+        },
+        {
+          title: "Tambah Tipe",
+          url: "/admin/anime-type/tambah",
+        },
+      ],
+    },
+    {
+      title: "Studio",
+      url: "/admin/studio",
+      icon: Building,
+      items: [
+        {
+          title: "Daftar Studio",
+          url: "/admin/studio",
+        },
+        {
+          title: "Tambah Studio",
+          url: "/admin/studio/tambah",
         },
       ],
     },

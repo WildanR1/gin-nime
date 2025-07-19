@@ -42,6 +42,7 @@ export interface AnimeWithDetails {
   }[];
   _count: {
     episodes: number;
+    genres: number;
   };
 }
 
@@ -486,10 +487,6 @@ export class AnimeModel {
     const animeData = animes || (await this.findMany());
 
     const totalAnimes = animeData.length;
-    const totalEpisodes = animeData.reduce(
-      (sum, anime) => sum + anime._count.episodes,
-      0
-    );
 
     // Get most popular genre
     const genreCounts: Record<string, number> = {};
@@ -513,6 +510,13 @@ export class AnimeModel {
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )[0].title
         : null;
+
+    // Calculate total episodes across all animes
+    const totalEpisodes =
+      animes?.reduce(
+        (total, anime) => total + (anime._count?.episodes || 0),
+        0
+      ) || 0;
 
     return {
       totalAnimes,

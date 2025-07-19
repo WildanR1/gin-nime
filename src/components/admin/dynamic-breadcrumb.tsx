@@ -99,10 +99,7 @@ export function DynamicBreadcrumb() {
         const pathSegments = pathname.split("/");
         if (pathSegments.length > 4) {
           // Kemungkinan ada ID di path
-          if (
-            pathSegments[4] &&
-            (pathSegments[3] === "edit" || pathSegments[3] === "episode")
-          ) {
+          if (pathSegments[4] && pathSegments[3] === "edit") {
             currentPath = pathSegments.slice(0, 4).join("/");
             config = routeConfig[currentPath] as RouteConfig | undefined;
           }

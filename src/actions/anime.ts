@@ -314,7 +314,7 @@ export async function deleteAnime(id: string): Promise<ActionResponse> {
       };
     }
 
-    // Delete anime (will cascade delete episodes and genres)
+    // Delete anime (will cascade delete related records)
     await AnimeModel.delete(id);
 
     return {

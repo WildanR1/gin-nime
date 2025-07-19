@@ -80,75 +80,6 @@ export const updateAnimeSchema = z.object({
   genreIds: z.array(z.string()).min(1, "Minimal pilih 1 genre"),
 });
 
-// Schema untuk episode server
-export const episodeServerSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Nama server tidak boleh kosong")
-    .max(50, "Nama server maksimal 50 karakter"),
-  videoUrl: z.string().url("URL video tidak valid"),
-  quality: z
-    .string()
-    .min(1, "Quality tidak boleh kosong")
-    .max(20, "Quality maksimal 20 karakter"),
-});
-
-// Schema untuk create episode
-export const createEpisodeSchema = z.object({
-  episodeNumber: z.number().int().min(1, "Nomor episode minimal 1"),
-  title: z
-    .string()
-    .max(255, "Judul episode maksimal 255 karakter")
-    .optional()
-    .or(z.literal("")),
-  description: z
-    .string()
-    .max(2000, "Deskripsi episode maksimal 2000 karakter")
-    .optional()
-    .or(z.literal("")),
-  thumbnail: z
-    .string()
-    .url("URL thumbnail tidak valid")
-    .optional()
-    .or(z.literal("")),
-  duration: z
-    .number()
-    .int()
-    .min(1, "Durasi episode minimal 1 detik")
-    .optional(),
-  releaseDate: z.date().optional(),
-  servers: z.array(episodeServerSchema).min(1, "Minimal tambahkan 1 server"),
-});
-
-// Schema untuk update episode
-export const updateEpisodeSchema = z.object({
-  title: z
-    .string()
-    .max(255, "Judul episode maksimal 255 karakter")
-    .optional()
-    .or(z.literal("")),
-  description: z
-    .string()
-    .max(2000, "Deskripsi episode maksimal 2000 karakter")
-    .optional()
-    .or(z.literal("")),
-  thumbnail: z
-    .string()
-    .url("URL thumbnail tidak valid")
-    .optional()
-    .or(z.literal("")),
-  duration: z
-    .number()
-    .int()
-    .min(1, "Durasi episode minimal 1 detik")
-    .optional(),
-  releaseDate: z.date().optional(),
-  servers: z
-    .array(episodeServerSchema)
-    .min(1, "Minimal tambahkan 1 server")
-    .optional(),
-});
-
 // Schema untuk filter anime
 export const animeFilterSchema = z.object({
   search: z.string().optional(),
@@ -172,9 +103,6 @@ export const paginationSchema = z.object({
 // TypeScript types dari schema
 export type CreateAnimeInput = z.infer<typeof createAnimeSchema>;
 export type UpdateAnimeInput = z.infer<typeof updateAnimeSchema>;
-export type CreateEpisodeInput = z.infer<typeof createEpisodeSchema>;
-export type UpdateEpisodeInput = z.infer<typeof updateEpisodeSchema>;
-export type EpisodeServerInput = z.infer<typeof episodeServerSchema>;
 export type AnimeFilterInput = z.infer<typeof animeFilterSchema>;
 export type PaginationInput = z.infer<typeof paginationSchema>;
 
