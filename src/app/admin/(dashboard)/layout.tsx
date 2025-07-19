@@ -16,11 +16,11 @@ export default async function AdminDashboardLayout({
 }) {
   return (
     <AuthProvider>
-      <SidebarProvider className="has-data-[variant=inset]:bg-slate-900">
+      <SidebarProvider className="has-data-[variant=inset]:bg-slate-800">
         <AppSidebar />
-        <SidebarInset className="bg-slate-800">
-          {/* warna lebih terang dari navbar seperti home */}
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b-2 border-slate-900">
+        <SidebarInset className="bg-background">
+          {/* header dengan warna yang kontras dengan background */}
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b-2 border-slate-700">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1 cursor-pointer" />
               <Separator
@@ -30,7 +30,7 @@ export default async function AdminDashboardLayout({
               <DynamicBreadcrumb />
             </div>
           </header>
-          <section className="p-4 pt-0 bg-slate-800">{children}</section>
+          <section className="p-4 bg-background rounded-xl">{children}</section>
         </SidebarInset>
       </SidebarProvider>
     </AuthProvider>

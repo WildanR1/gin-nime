@@ -39,40 +39,28 @@ export default async function TambahAnimePage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
-          <Play className="w-6 h-6 text-white" />
+      {/* Page Header tanpa card wrapper */}
+      <div className="flex items-center gap-4 mb-8">
+        <div className="w-10 h-10 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center">
+          <Play className="w-5 h-5 text-sky-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-xl font-semibold text-white">
             Tambah Anime Baru
           </h1>
-          <p className="text-slate-600 dark:text-slate-400">
-            Tambahkan anime baru ke dalam platform
+          <p className="text-sm text-slate-400 mt-1">
+            Kelola data anime dengan mudah dan terstruktur
           </p>
         </div>
       </div>
 
-      {/* Form Card */}
-      <Card className="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white">
-            Informasi Anime
-          </CardTitle>
-          <CardDescription className="text-slate-600 dark:text-slate-400">
-            Isi form di bawah untuk menambahkan anime baru
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AnimeForm
-            animeTypes={animeTypes}
-            studios={studios}
-            genres={genres}
-            mode="create"
-          />
-        </CardContent>
-      </Card>
+      {/* Form langsung tanpa card wrapper */}
+      <AnimeForm
+        animeTypes={animeTypes}
+        studios={studios}
+        genres={genres}
+        mode="create"
+      />
     </div>
   );
 }

@@ -14,10 +14,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, X } from "lucide-react";
+import { QuickAddModal } from "@/components/ui/quick-add-modal";
+import { FormCombobox } from "@/components/ui/form-combobox";
+import { FormMultiCombobox } from "@/components/ui/form-multi-combobox";
+import {
+  Loader2,
+  FileText,
+  Info,
+  Settings,
+  Calendar,
+  Star,
+  Play,
+  Clock,
+  Plus,
+  Building2,
+  Tags,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface AnimeFormData {
@@ -80,13 +93,9 @@ export function AnimeForm({
     }
   };
 
-  const handleGenreToggle = (genreId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      genreIds: prev.genreIds.includes(genreId)
-        ? prev.genreIds.filter((id) => id !== genreId)
-        : [...prev.genreIds, genreId],
-    }));
+  const handleQuickAddSuccess = () => {
+    // Refresh the page to get updated data
+    router.refresh();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -140,146 +149,260 @@ export function AnimeForm({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Basic Information */}
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Informasi Dasar</CardTitle>
+          <Card className="bg-slate-800 border border-slate-600 shadow-lg p-0">
+            <CardHeader className="border-b border-slate-600 bg-slate-700/30 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-white" />
+                </div>
+                <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
+                  Informasi Dasar
+                  <div className="w-1.5 h-1.5 bg-sky-400 rounded-full" />
+                </CardTitle>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Title */}
-              <div className="space-y-2">
-                <Label htmlFor="title">Judul Anime *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange("title", e.target.value)}
-                  placeholder="Masukkan judul anime"
-                  className={errors.title ? "border-red-500" : ""}
-                />
-                {errors.title && (
-                  <p className="text-sm text-red-500">{errors.title}</p>
-                )}
-              </div>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 gap-6">
+                {/* Title */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="title"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4 text-sky-400" />
+                    Judul Anime *
+                  </Label>
+                  <Input
+                    id="title"
+                    value={formData.title}
+                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    placeholder="Masukkan judul anime"
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-sky-500 transition-colors ${
+                      errors.title ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.title && (
+                    <p className="text-sm text-red-400">{errors.title}</p>
+                  )}
+                </div>
 
-              {/* Synopsis */}
-              <div className="space-y-2">
-                <Label htmlFor="synopsis">Sinopsis</Label>
-                <Textarea
-                  id="synopsis"
-                  value={formData.synopsis}
-                  onChange={(e) =>
-                    handleInputChange("synopsis", e.target.value)
-                  }
-                  placeholder="Masukkan sinopsis anime"
-                  rows={4}
-                  className={errors.synopsis ? "border-red-500" : ""}
-                />
-                {errors.synopsis && (
-                  <p className="text-sm text-red-500">{errors.synopsis}</p>
-                )}
-              </div>
+                {/* Synopsis */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="synopsis"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <FileText className="w-4 h-4 text-sky-400" />
+                    Sinopsis
+                  </Label>
+                  <Textarea
+                    id="synopsis"
+                    value={formData.synopsis}
+                    onChange={(e) =>
+                      handleInputChange("synopsis", e.target.value)
+                    }
+                    placeholder="Masukkan sinopsis anime"
+                    rows={4}
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-sky-500 transition-colors ${
+                      errors.synopsis ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.synopsis && (
+                    <p className="text-sm text-red-400">{errors.synopsis}</p>
+                  )}
+                </div>
 
-              {/* Cover Image */}
-              <div className="space-y-2">
-                <Label htmlFor="coverImage">URL Cover Image</Label>
-                <Input
-                  id="coverImage"
-                  type="url"
-                  value={formData.coverImage}
-                  onChange={(e) =>
-                    handleInputChange("coverImage", e.target.value)
-                  }
-                  placeholder="https://example.com/cover.jpg"
-                  className={errors.coverImage ? "border-red-500" : ""}
-                />
-                {errors.coverImage && (
-                  <p className="text-sm text-red-500">{errors.coverImage}</p>
-                )}
+                {/* Cover Image */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="coverImage"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <Play className="w-4 h-4 text-sky-400" />
+                    URL Cover Image
+                  </Label>
+                  <Input
+                    id="coverImage"
+                    type="url"
+                    value={formData.coverImage}
+                    onChange={(e) =>
+                      handleInputChange("coverImage", e.target.value)
+                    }
+                    placeholder="https://example.com/cover.jpg"
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-sky-500 transition-colors ${
+                      errors.coverImage ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.coverImage && (
+                    <p className="text-sm text-red-400">{errors.coverImage}</p>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Classification */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Klasifikasi</CardTitle>
+          <Card className="bg-slate-800 border border-slate-600 shadow-lg p-0">
+            <CardHeader className="border-b border-slate-600 bg-slate-700/30 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-white" />
+                </div>
+                <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
+                  Klasifikasi
+                  <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                </CardTitle>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Status */}
-              <div className="space-y-2">
-                <Label>Status *</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value) => handleInputChange("status", value)}
-                >
-                  <SelectTrigger
-                    className={errors.status ? "border-red-500" : ""}
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-6">
+                {/* Status */}
+                <div className="space-y-2">
+                  <Label className="text-slate-200 flex items-center gap-2">
+                    <Play className="w-4 h-4 text-emerald-400" />
+                    Status *
+                  </Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) =>
+                      handleInputChange("status", value)
+                    }
                   >
-                    <SelectValue placeholder="Pilih status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ONGOING">Sedang Tayang</SelectItem>
-                    <SelectItem value="COMPLETED">Selesai</SelectItem>
-                    <SelectItem value="UPCOMING">Akan Datang</SelectItem>
-                    <SelectItem value="HIATUS">Hiatus</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.status && (
-                  <p className="text-sm text-red-500">{errors.status}</p>
-                )}
-              </div>
+                    <SelectTrigger
+                      className={`bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-600 transition-colors ${
+                        errors.status ? "border-red-500" : ""
+                      }`}
+                    >
+                      <SelectValue placeholder="Pilih status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ONGOING">Sedang Tayang</SelectItem>
+                      <SelectItem value="COMPLETED">Selesai</SelectItem>
+                      <SelectItem value="UPCOMING">Akan Datang</SelectItem>
+                      <SelectItem value="HIATUS">Hiatus</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.status && (
+                    <p className="text-sm text-red-400">{errors.status}</p>
+                  )}
+                </div>
 
-              {/* Anime Type */}
-              <div className="space-y-2">
-                <Label>Tipe Anime</Label>
-                <Select
-                  value={formData.animeTypeId}
-                  onValueChange={(value) =>
-                    handleInputChange("animeTypeId", value)
-                  }
-                >
-                  <SelectTrigger
-                    className={errors.animeTypeId ? "border-red-500" : ""}
-                  >
-                    <SelectValue placeholder="Pilih tipe anime" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {animeTypes.map((type) => (
-                      <SelectItem key={type.id} value={type.id}>
-                        {type.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.animeTypeId && (
-                  <p className="text-sm text-red-500">{errors.animeTypeId}</p>
-                )}
-              </div>
+                {/* Anime Type */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-slate-200 flex items-center gap-2">
+                      <Settings className="w-4 h-4 text-emerald-400" />
+                      Tipe Anime
+                    </Label>
+                    <QuickAddModal
+                      type="animeType"
+                      onSuccess={handleQuickAddSuccess}
+                    >
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-600 hover:text-white h-7 px-2 text-xs"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Tambah
+                      </Button>
+                    </QuickAddModal>
+                  </div>
+                  <FormCombobox
+                    items={animeTypes}
+                    value={formData.animeTypeId}
+                    onValueChange={(value) =>
+                      handleInputChange("animeTypeId", value)
+                    }
+                    placeholder="Pilih tipe anime"
+                    searchPlaceholder="Cari tipe anime..."
+                    emptyMessage="Tidak ada tipe anime ditemukan."
+                    error={!!errors.animeTypeId}
+                  />
+                  {errors.animeTypeId && (
+                    <p className="text-sm text-red-400">{errors.animeTypeId}</p>
+                  )}
+                </div>
 
-              {/* Studio */}
-              <div className="space-y-2">
-                <Label>Studio</Label>
-                <Select
-                  value={formData.studioId}
-                  onValueChange={(value) =>
-                    handleInputChange("studioId", value)
-                  }
-                >
-                  <SelectTrigger
-                    className={errors.studioId ? "border-red-500" : ""}
-                  >
-                    <SelectValue placeholder="Pilih studio" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {studios.map((studio) => (
-                      <SelectItem key={studio.id} value={studio.id}>
-                        {studio.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.studioId && (
-                  <p className="text-sm text-red-500">{errors.studioId}</p>
-                )}
+                {/* Studio */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-slate-200 flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-emerald-400" />
+                      Studio
+                    </Label>
+                    <QuickAddModal
+                      type="studio"
+                      onSuccess={handleQuickAddSuccess}
+                    >
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-600 hover:text-white h-7 px-2 text-xs"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Tambah
+                      </Button>
+                    </QuickAddModal>
+                  </div>
+                  <FormCombobox
+                    items={studios}
+                    value={formData.studioId}
+                    onValueChange={(value) =>
+                      handleInputChange("studioId", value)
+                    }
+                    placeholder="Pilih studio"
+                    searchPlaceholder="Cari studio..."
+                    emptyMessage="Tidak ada studio ditemukan."
+                    error={!!errors.studioId}
+                  />
+                  {errors.studioId && (
+                    <p className="text-sm text-red-400">{errors.studioId}</p>
+                  )}
+                </div>
+
+                {/* Genres */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-slate-200 flex items-center gap-2">
+                      <Tags className="w-4 h-4 text-emerald-400" />
+                      Genre *
+                    </Label>
+                    <QuickAddModal
+                      type="genre"
+                      onSuccess={handleQuickAddSuccess}
+                    >
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="bg-slate-700/50 border-slate-600 text-slate-200 hover:bg-slate-600 hover:text-white h-7 px-2 text-xs"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Tambah
+                      </Button>
+                    </QuickAddModal>
+                  </div>
+                  <FormMultiCombobox
+                    items={genres}
+                    selectedIds={formData.genreIds}
+                    onToggle={(genreId) => {
+                      const updatedGenres = formData.genreIds.includes(genreId)
+                        ? formData.genreIds.filter((id) => id !== genreId)
+                        : [...formData.genreIds, genreId];
+                      handleInputChange("genreIds", updatedGenres);
+                    }}
+                    placeholder="Pilih genre"
+                    searchPlaceholder="Cari genre..."
+                    emptyMessage="Tidak ada genre ditemukan."
+                    error={!!errors.genreIds}
+                  />
+                  {errors.genreIds && (
+                    <p className="text-sm text-red-400">{errors.genreIds}</p>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -287,177 +410,156 @@ export function AnimeForm({
 
         {/* Additional Information */}
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Informasi Tambahan</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Release Year */}
-              <div className="space-y-2">
-                <Label htmlFor="releaseYear">Tahun Rilis</Label>
-                <Input
-                  id="releaseYear"
-                  type="number"
-                  min="1900"
-                  max={new Date().getFullYear() + 5}
-                  value={formData.releaseYear}
-                  onChange={(e) =>
-                    handleInputChange("releaseYear", e.target.value)
-                  }
-                  placeholder="2024"
-                  className={errors.releaseYear ? "border-red-500" : ""}
-                />
-                {errors.releaseYear && (
-                  <p className="text-sm text-red-500">{errors.releaseYear}</p>
-                )}
-              </div>
-
-              {/* Rating */}
-              <div className="space-y-2">
-                <Label htmlFor="rating">Rating (0-10)</Label>
-                <Input
-                  id="rating"
-                  type="number"
-                  min="0"
-                  max="10"
-                  step="0.1"
-                  value={formData.rating}
-                  onChange={(e) => handleInputChange("rating", e.target.value)}
-                  placeholder="8.5"
-                  className={errors.rating ? "border-red-500" : ""}
-                />
-                {errors.rating && (
-                  <p className="text-sm text-red-500">{errors.rating}</p>
-                )}
-              </div>
-
-              {/* Total Episodes */}
-              <div className="space-y-2">
-                <Label htmlFor="totalEpisodes">Total Episode</Label>
-                <Input
-                  id="totalEpisodes"
-                  type="number"
-                  min="1"
-                  value={formData.totalEpisodes}
-                  onChange={(e) =>
-                    handleInputChange("totalEpisodes", e.target.value)
-                  }
-                  placeholder="12"
-                  className={errors.totalEpisodes ? "border-red-500" : ""}
-                />
-                {errors.totalEpisodes && (
-                  <p className="text-sm text-red-500">{errors.totalEpisodes}</p>
-                )}
-              </div>
-
-              {/* Duration */}
-              <div className="space-y-2">
-                <Label htmlFor="duration">Durasi per Episode (menit)</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  min="1"
-                  value={formData.duration}
-                  onChange={(e) =>
-                    handleInputChange("duration", e.target.value)
-                  }
-                  placeholder="24"
-                  className={errors.duration ? "border-red-500" : ""}
-                />
-                {errors.duration && (
-                  <p className="text-sm text-red-500">{errors.duration}</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Genres */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">
-                Genre *
-                <span className="ml-2 text-sm font-normal text-slate-500">
-                  ({formData.genreIds.length} dipilih)
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {errors.genreIds && (
-                <p className="text-sm text-red-500 mb-4">{errors.genreIds}</p>
-              )}
-              <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-                {genres.map((genre) => (
-                  <div
-                    key={genre.id}
-                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800"
-                  >
-                    <Checkbox
-                      id={`genre-${genre.id}`}
-                      checked={formData.genreIds.includes(genre.id)}
-                      onCheckedChange={() => handleGenreToggle(genre.id)}
-                    />
-                    <Label
-                      htmlFor={`genre-${genre.id}`}
-                      className="flex-1 cursor-pointer text-sm"
-                    >
-                      {genre.name}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-
-              {/* Selected Genres */}
-              {formData.genreIds.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    Genre yang dipilih:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.genreIds.map((genreId) => {
-                      const genre = genres.find((g) => g.id === genreId);
-                      return genre ? (
-                        <Badge
-                          key={genreId}
-                          variant="secondary"
-                          className="bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20"
-                        >
-                          {genre.name}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-2 hover:bg-transparent"
-                            onClick={() => handleGenreToggle(genreId)}
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
-                        </Badge>
-                      ) : null;
-                    })}
-                  </div>
+          <Card className="bg-slate-800 border border-slate-600 shadow-lg p-0">
+            <CardHeader className="border-b border-slate-600 bg-slate-700/30 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <Info className="w-4 h-4 text-white" />
                 </div>
-              )}
+                <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
+                  Informasi Tambahan
+                  <div className="w-1.5 h-1.5 bg-purple-400 rounded-full" />
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-6">
+                {/* Release Year */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="releaseYear"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <Calendar className="w-4 h-4 text-purple-400" />
+                    Tahun Rilis
+                  </Label>
+                  <Input
+                    id="releaseYear"
+                    type="number"
+                    min="1900"
+                    max={new Date().getFullYear() + 5}
+                    value={formData.releaseYear}
+                    onChange={(e) =>
+                      handleInputChange("releaseYear", e.target.value)
+                    }
+                    placeholder="2024"
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-purple-500 transition-colors ${
+                      errors.releaseYear ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.releaseYear && (
+                    <p className="text-sm text-red-400">{errors.releaseYear}</p>
+                  )}
+                </div>
+
+                {/* Rating */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="rating"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <Star className="w-4 h-4 text-purple-400" />
+                    Rating (0-10)
+                  </Label>
+                  <Input
+                    id="rating"
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={formData.rating}
+                    onChange={(e) =>
+                      handleInputChange("rating", e.target.value)
+                    }
+                    placeholder="8.5"
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-purple-500 transition-colors ${
+                      errors.rating ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.rating && (
+                    <p className="text-sm text-red-400">{errors.rating}</p>
+                  )}
+                </div>
+
+                {/* Total Episodes */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="totalEpisodes"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <Play className="w-4 h-4 text-purple-400" />
+                    Total Episode
+                  </Label>
+                  <Input
+                    id="totalEpisodes"
+                    type="number"
+                    min="1"
+                    value={formData.totalEpisodes}
+                    onChange={(e) =>
+                      handleInputChange("totalEpisodes", e.target.value)
+                    }
+                    placeholder="12"
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-purple-500 transition-colors ${
+                      errors.totalEpisodes ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.totalEpisodes && (
+                    <p className="text-sm text-red-400">
+                      {errors.totalEpisodes}
+                    </p>
+                  )}
+                </div>
+
+                {/* Duration */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="duration"
+                    className="text-slate-200 flex items-center gap-2"
+                  >
+                    <Clock className="w-4 h-4 text-purple-400" />
+                    Durasi per Episode (menit)
+                  </Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    min="1"
+                    value={formData.duration}
+                    onChange={(e) =>
+                      handleInputChange("duration", e.target.value)
+                    }
+                    placeholder="24"
+                    className={`bg-slate-700/50 border-slate-600 text-slate-200 placeholder:text-slate-400 focus:border-purple-500 transition-colors ${
+                      errors.duration ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.duration && (
+                    <p className="text-sm text-red-400">{errors.duration}</p>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
       </div>
 
       {/* Form Actions */}
-      <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+      <div className="flex justify-end gap-3 pt-6 border-t border-slate-600">
         <Button
           type="button"
           variant="outline"
           onClick={() => router.back()}
           disabled={isLoading}
+          className="border-slate-500 text-slate-300 hover:bg-slate-600/50 hover:border-slate-400 transition-all duration-200"
         >
           Batal
         </Button>
         <Button
           type="submit"
           disabled={isLoading}
-          className="bg-blue-500 hover:bg-blue-600"
+          className="bg-sky-500 hover:bg-sky-600 text-white shadow-lg hover:shadow-sky-500/25 transition-all duration-200 font-medium"
         >
           {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          {!isLoading && <Play className="w-4 h-4 mr-2" />}
           {mode === "create" ? "Tambah Anime" : "Perbarui Anime"}
         </Button>
       </div>

@@ -51,12 +51,12 @@ export function NavMain({
                       tooltip={item.title}
                       className={`
                         w-full transition-all duration-200 relative overflow-hidden
-                        data-[state=open]:!bg-slate-800/60 data-[state=open]:!text-white data-[state=open]:hover:!bg-slate-800/80
-                        data-[state=closed]:bg-transparent data-[state=closed]:hover:bg-slate-800/50
+                        data-[state=open]:!bg-slate-700/60 data-[state=open]:!text-white data-[state=open]:hover:!bg-slate-700/80
+                        data-[state=closed]:bg-transparent data-[state=closed]:hover:bg-slate-700/50
                         ${
                           pathname.startsWith(item.url)
                             ? "bg-sky-500/15 text-sky-200 shadow-sm hover:!bg-sky-500/25 data-[state=open]:!bg-sky-500/20 data-[state=open]:hover:!bg-sky-500/30 data-[state=closed]:!bg-sky-500/15 data-[state=closed]:hover:!bg-sky-500/25"
-                            : "text-slate-300 hover:!bg-slate-800/60 hover:!text-white"
+                            : "text-slate-300 hover:!bg-slate-700/60 hover:!text-white"
                         }
                       `}
                     >
@@ -69,7 +69,7 @@ export function NavMain({
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <SidebarMenuSub className="ml-6 border-l border-slate-700/30 pl-4 space-y-1">
+                    <SidebarMenuSub className="ml-6 border-l border-slate-600/30 pl-4 space-y-1">
                       {item.items.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
@@ -79,7 +79,7 @@ export function NavMain({
                               ${
                                 pathname === subItem.url
                                   ? "bg-sky-600/20 text-sky-100 font-medium hover:!bg-sky-600/30 border-l-2 border-sky-400 pl-3"
-                                  : "text-slate-400 hover:!bg-slate-800/40 hover:!text-slate-200 pl-3"
+                                  : "text-slate-400 hover:!bg-slate-700/40 hover:!text-slate-200 pl-3"
                               }
                             `}
                           >
@@ -101,7 +101,7 @@ export function NavMain({
                     ${
                       pathname === item.url
                         ? "bg-sky-500/25 text-white shadow-md hover:!bg-sky-500/35 "
-                        : "text-slate-300 hover:!bg-slate-800/60 hover:!text-white"
+                        : "text-slate-300 hover:!bg-slate-700/60 hover:!text-white"
                     }
                   `}
                 >

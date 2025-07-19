@@ -31,7 +31,7 @@ export function NavUser({
           <DropdownMenuTrigger asChild className="cursor-pointer">
             <SidebarMenuButton
               size="lg"
-              className="transition-all duration-200 relative overflow-hidden rounded-lg hover:bg-slate-800/70 data-[state=open]:bg-slate-800/80 data-[state=open]:text-white data-[state=open]:hover:bg-slate-800/90"
+              className="transition-all duration-200 relative overflow-hidden rounded-lg hover:bg-slate-700/70 data-[state=open]:bg-slate-700/80 data-[state=open]:text-white data-[state=open]:hover:bg-slate-700/90"
             >
               <div className="flex items-center gap-3 w-full">
                 <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
@@ -52,12 +52,12 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-slate-800 border-slate-700"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg bg-slate-700 border-slate-600"
             side="bottom"
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuItem className="hover:bg-slate-700 text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer">
+            <DropdownMenuItem className="hover:bg-slate-600 text-slate-200 hover:text-white transition-colors duration-200 cursor-pointer">
               <Settings className="mr-2 h-4 w-4" />
               Pengaturan Akun
             </DropdownMenuItem>
