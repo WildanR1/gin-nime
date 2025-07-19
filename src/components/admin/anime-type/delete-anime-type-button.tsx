@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { deleteAnimeType } from "@/actions/animeType";
+import { useDeleteAnimeType } from "@/hooks/use-anime-types";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -20,42 +19,24 @@ import { toast } from "sonner";
 
 interface DeleteAnimeTypeButtonProps {
   animeTypeId: string;
-  animeTypeName: string;
-  animeCount: number;
 }
 
 export function DeleteAnimeTypeButton({
   animeTypeId,
-  animeTypeName,
-  animeCount,
 }: DeleteAnimeTypeButtonProps) {
-  const router = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { deleteAnimeType, isLoading } = useDeleteAnimeType();
 
   const handleDelete = async () => {
-    setIsDeleting(true);
-
     try {
-      const result = await deleteAnimeType(animeTypeId);
-
-      if (result.success) {
-        toast.success(result.message);
-        setIsOpen(false);
-        router.refresh();
-      } else {
-        toast.error(result.message);
-      }
+      await deleteAnimeType(animeTypeId);
+      toast.success("Tipe anime berhasil dihapus");
+      setIsOpen(false);
     } catch (error) {
-      toast.error("Terjadi kesalahan yang tidak diharapkan");
+      toast.error("Gagal menghapus tipe anime");
       console.error("Delete anime type error:", error);
-    } finally {
-      setIsDeleting(false);
     }
   };
-
-  // Disable delete if anime type is being used
-  const canDelete = animeCount === 0;
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -63,17 +44,7 @@ export function DeleteAnimeTypeButton({
         <Button
           variant="outline"
           size="sm"
-          disabled={!canDelete}
-          className={
-            canDelete
-              ? "border-red-200 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:hover:bg-red-900/20"
-              : "opacity-50 cursor-not-allowed"
-          }
-          title={
-            !canDelete
-              ? `Tidak dapat menghapus karena masih digunakan oleh ${animeCount} anime`
-              : "Hapus tipe anime"
-          }
+          className="border-red-200 hover:bg-red-50 hover:border-red-300 dark:border-red-800 dark:hover:bg-red-900/20"
         >
           <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
         </Button>
@@ -84,8 +55,7 @@ export function DeleteAnimeTypeButton({
             Hapus Tipe Anime
           </AlertDialogTitle>
           <AlertDialogDescription className="text-slate-600 dark:text-slate-400">
-            Apakah Anda yakin ingin menghapus tipe anime &quot;{animeTypeName}
-            &quot;?
+            Apakah Anda yakin ingin menghapus tipe anime ini?
             <br />
             <span className="font-medium text-red-600 dark:text-red-400">
               Tindakan ini tidak dapat dibatalkan.
@@ -94,17 +64,17 @@ export function DeleteAnimeTypeButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            disabled={isDeleting}
+            disabled={isLoading}
             className="border-slate-200 dark:border-slate-600"
           >
             Batal
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            disabled={isDeleting}
+            disabled={isLoading}
             className="bg-red-600 hover:bg-red-700 text-white"
           >
-            {isDeleting ? (
+            {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Menghapus...
