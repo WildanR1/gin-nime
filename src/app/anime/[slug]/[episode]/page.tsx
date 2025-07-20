@@ -17,14 +17,15 @@ import {
 } from "lucide-react";
 
 interface WatchPageProps {
-  params: {
+  params: Promise<{
     slug: string;
     episode: string;
-  };
+  }>;
 }
 
-export default function WatchPage({ params }: WatchPageProps) {
-  const episodeNumber = parseInt(params.episode);
+export default async function WatchPage({ params }: WatchPageProps) {
+  const { slug, episode } = await params;
+  const episodeNumber = parseInt(episode);
 
   // Mock data - nanti akan diganti dengan query database
   const anime = {
@@ -34,7 +35,7 @@ export default function WatchPage({ params }: WatchPageProps) {
     totalEpisodes: 24,
   };
 
-  const episode = {
+  const episodes = {
     id: "1",
     episodeNumber: episodeNumber,
     title: "Ryomen Sukuna",
@@ -129,7 +130,7 @@ export default function WatchPage({ params }: WatchPageProps) {
           </Link>
           <span>/</span>
           <Link
-            href={`/anime/${anime.slug}`}
+            href={`/anime/${slug}`}
             className="hover:text-white transition-colors"
           >
             {anime.title}
@@ -191,7 +192,7 @@ export default function WatchPage({ params }: WatchPageProps) {
             {/* Episode Navigation */}
             <div className="flex justify-between items-center mb-6">
               {episodeNumber > 1 ? (
-                <Link href={`/anime/${anime.slug}/${episodeNumber - 1}`}>
+                <Link href={`/anime/${slug}/${episodeNumber - 1}`}>
                   <Button
                     variant="outline"
                     className="bg-slate-800 border-slate-600 text-white hover:bg-slate-700"
@@ -212,7 +213,7 @@ export default function WatchPage({ params }: WatchPageProps) {
               )}
 
               {episodeNumber < anime.totalEpisodes ? (
-                <Link href={`/anime/${anime.slug}/${episodeNumber + 1}`}>
+                <Link href={`/anime/${slug}/${episodeNumber + 1}`}>
                   <Button className="bg-sky-600 hover:bg-sky-700">
                     Episode Selanjutnya
                     <SkipForward className="ml-2 w-4 h-4" />
@@ -232,25 +233,27 @@ export default function WatchPage({ params }: WatchPageProps) {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-white text-xl">
-                      {anime.title} - Episode {episode.episodeNumber}
+                      {anime.title} - Episode {episodes.episodeNumber}
                     </CardTitle>
                     <h2 className="text-lg text-gray-300 mt-1">
-                      {episode.title}
+                      {episodes.title}
                     </h2>
                   </div>
                   <Badge className="bg-sky-600">
-                    Episode {episode.episodeNumber}
+                    Episode {episodes.episodeNumber}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-300 mb-4">{episode.description}</p>
+                <p className="text-gray-300 mb-4">{episodes.description}</p>
                 <div className="flex items-center space-x-4 text-sm text-gray-400">
                   <span>
                     Dirilis:{" "}
-                    {new Date(episode.releaseDate).toLocaleDateString("id-ID")}
+                    {new Date(episodes.releaseDate).toLocaleDateString("id-ID")}
                   </span>
-                  <span>Durasi: {Math.floor(episode.duration / 60)} menit</span>
+                  <span>
+                    Durasi: {Math.floor(episodes.duration / 60)} menit
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -313,7 +316,7 @@ export default function WatchPage({ params }: WatchPageProps) {
                   {relatedEpisodes.map((ep) => (
                     <Link
                       key={ep.episodeNumber}
-                      href={`/anime/${anime.slug}/${ep.episodeNumber}`}
+                      href={`/anime/${slug}/${ep.episodeNumber}`}
                     >
                       <div
                         className={`p-4 border-b border-slate-700 hover:bg-slate-700 transition-colors ${
@@ -346,7 +349,7 @@ export default function WatchPage({ params }: WatchPageProps) {
 
             {/* Back to Anime Detail */}
             <div className="mt-6">
-              <Link href={`/anime/${anime.slug}`}>
+              <Link href={`/anime/${slug}`}>
                 <Button
                   variant="outline"
                   className="w-full bg-slate-800 border-slate-600 text-white hover:bg-slate-700"

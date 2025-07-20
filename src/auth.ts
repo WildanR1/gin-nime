@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  trustHost: true,
   providers: [
     Credentials({
       name: "credentials",
@@ -78,5 +79,5 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
   pages: {
     signIn: "/admin/login",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
 });

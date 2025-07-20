@@ -20,12 +20,15 @@ import {
 } from "lucide-react";
 
 interface AnimeDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function AnimeDetailPage({ params }: AnimeDetailPageProps) {
+export default async function AnimeDetailPage({
+  params,
+}: AnimeDetailPageProps) {
+  const { slug } = await params;
   // Mock data - nanti akan diganti dengan query database berdasarkan slug
   const anime = {
     id: "1",
