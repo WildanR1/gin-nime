@@ -59,31 +59,11 @@ const navigationData = {
       title: "Tipe Anime",
       url: "/admin/anime-type",
       icon: Tv,
-      items: [
-        {
-          title: "Daftar Tipe",
-          url: "/admin/anime-type",
-        },
-        {
-          title: "Tambah Tipe",
-          url: "/admin/anime-type/tambah",
-        },
-      ],
     },
     {
       title: "Studio",
       url: "/admin/studio",
       icon: Building,
-      items: [
-        {
-          title: "Daftar Studio",
-          url: "/admin/studio",
-        },
-        {
-          title: "Tambah Studio",
-          url: "/admin/studio/tambah",
-        },
-      ],
     },
     {
       title: "Kelola Users",

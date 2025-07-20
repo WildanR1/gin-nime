@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { deleteStudio } from "@/actions/studio";
+import { useDeleteStudio } from "@/hooks/use-studios";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -29,28 +28,17 @@ export function DeleteStudioButton({
   studioName,
   animeCount,
 }: DeleteStudioButtonProps) {
-  const router = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { deleteStudio, isLoading } = useDeleteStudio();
 
   const handleDelete = async () => {
-    setIsDeleting(true);
-
     try {
-      const result = await deleteStudio(studioId);
-
-      if (result.success) {
-        toast.success(result.message);
-        setIsOpen(false);
-        router.refresh();
-      } else {
-        toast.error(result.message);
-      }
+      await deleteStudio(studioId);
+      toast.success("Studio berhasil dihapus");
+      setIsOpen(false);
     } catch (error) {
-      toast.error("Terjadi kesalahan yang tidak diharapkan");
+      toast.error("Gagal menghapus studio");
       console.error("Delete studio error:", error);
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -93,17 +81,17 @@ export function DeleteStudioButton({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            disabled={isDeleting}
+            disabled={isLoading}
             className="border-slate-200 dark:border-slate-600"
           >
             Batal
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            disabled={isDeleting}
+            disabled={isLoading}
             className="bg-red-600 hover:bg-red-700 text-white"
           >
-            {isDeleting ? (
+            {isLoading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Menghapus...
