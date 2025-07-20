@@ -55,10 +55,8 @@ export default async function GenreManagementPage({
     typeof resolvedSearchParams.sortBy === "string"
       ? resolvedSearchParams.sortBy
       : "name";
-  const sortOrder =
-    typeof resolvedSearchParams.sortOrder === "string"
-      ? resolvedSearchParams.sortOrder
-      : "asc";
+  const sortOrder: "asc" | "desc" =
+    resolvedSearchParams.sortOrder === "desc" ? "desc" : "asc";
   const currentPage =
     typeof resolvedSearchParams.page === "string"
       ? parseInt(resolvedSearchParams.page)
@@ -67,9 +65,9 @@ export default async function GenreManagementPage({
 
   // Get data using action
   const result = await getGenres({
-    searchQuery,
-    sortBy: sortBy as "name" | "animes" | "createdAt",
-    sortOrder: sortOrder as "asc" | "desc",
+    search: searchQuery,
+    orderBy: sortBy,
+    order: sortOrder,
     page: currentPage,
     pageSize,
   });
@@ -78,7 +76,45 @@ export default async function GenreManagementPage({
     throw new Error(result.message);
   }
 
-  const { genres, pagination, stats, allGenres } = result.data!;
+  const {
+    genres,
+    pagination: rawPagination,
+    stats: rawStats,
+    allGenres,
+  } = result.data!;
+
+  // Map stats to expected UI fields for compatibility with UI
+  const stats = {
+    totalGenres: rawStats?.total ?? 0,
+    mostPopularGenre:
+      genres && genres.length > 0
+        ? genres.reduce(
+            (max, g) => (g._count.animes > (max?._count.animes ?? 0) ? g : max),
+            genres[0]
+          ).name
+        : null,
+    totalAnimes:
+      genres && genres.length > 0
+        ? genres.reduce((sum, g) => sum + (g._count.animes ?? 0), 0)
+        : 0,
+    ...rawStats,
+  };
+  const pagination = {
+    ...rawPagination,
+    currentPage: rawPagination?.page ?? 1,
+    totalItems: rawPagination?.total ?? 0,
+    startIndex:
+      rawPagination && rawPagination.total > 0
+        ? (rawPagination.page - 1) * rawPagination.pageSize + 1
+        : 0,
+    endIndex:
+      rawPagination && rawPagination.total > 0
+        ? Math.min(
+            rawPagination.page * rawPagination.pageSize,
+            rawPagination.total
+          )
+        : 0,
+  };
 
   return (
     <div className="space-y-6">

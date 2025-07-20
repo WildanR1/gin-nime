@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { GenreModel, type GenreFilters } from "@/lib/models/genre";
+import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 import {
   createGenreSchema,
   updateGenreSchema,
@@ -23,25 +24,59 @@ export interface ActionResponse<T = any> {
 }
 
 /**
- * Get genres with filtering and pagination
+ * Get genres with optional filtering and pagination
  */
-export async function getGenres(filters: GenreFilters = {}) {
+export async function getGenres({
+  search = "",
+  page = 1,
+  pageSize = 20,
+  orderBy = "name",
+  order = "asc",
+}: {
+  search?: string;
+  page?: number;
+  pageSize?: number;
+  orderBy?: string;
+  order?: "asc" | "desc";
+} = {}) {
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== "ADMIN") {
       throw new Error("Unauthorized");
     }
 
-    const result = await GenreModel.findManyPaginated(filters);
-    const stats = await GenreModel.getStats(result.allData);
+    const where = search
+      ? { name: { contains: search, mode: "insensitive" } }
+      : {};
+
+    const total = await prisma.genre.count({ where });
+    const genres = await prisma.genre.findMany({
+      where,
+      orderBy: { [orderBy]: order },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      include: { _count: { select: { animes: true } } },
+    });
+
+    // Stats example: total genres, used genres, unused genres
+    const usedCount = await prisma.genre.count({
+      where: { animes: { some: {} } },
+    });
+    const unusedCount = total - usedCount;
+    const stats = { total, used: usedCount, unused: unusedCount };
 
     return {
       success: true,
       data: {
-        genres: result.data,
-        pagination: result.pagination,
+        genres,
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages: Math.ceil(total / pageSize),
+        },
         stats,
-        allGenres: result.allData,
+        allGenres: genres, // for compatibility
       },
     };
   } catch (error) {
@@ -64,7 +99,10 @@ export async function getGenreById(id: string): Promise<ActionResponse> {
       throw new Error("Unauthorized");
     }
 
-    const genre = await GenreModel.findById(id);
+    const genre = await prisma.genre.findUnique({
+      where: { id },
+      include: { _count: { select: { animes: true } } },
+    });
     if (!genre) {
       return {
         success: false,
@@ -103,7 +141,6 @@ export async function createGenre(formData: FormData): Promise<ActionResponse> {
     // Extract form data
     const rawData = {
       name: formData.get("name")?.toString() || "",
-      description: formData.get("description")?.toString() || "",
     };
 
     // Validate with Zod
@@ -124,10 +161,11 @@ export async function createGenre(formData: FormData): Promise<ActionResponse> {
       };
     }
 
-    const { name, description } = validationResult.data;
+    const { name } = validationResult.data;
 
     // Check if genre name already exists
-    if (await GenreModel.existsByName(name)) {
+    const exists = await prisma.genre.findFirst({ where: { name } });
+    if (exists) {
       return {
         success: false,
         message: "Genre dengan nama tersebut sudah ada",
@@ -136,13 +174,18 @@ export async function createGenre(formData: FormData): Promise<ActionResponse> {
     }
 
     // Generate unique slug
-    const slug = await GenreModel.generateUniqueSlug(name);
+    let slug = generateSlug(name);
+    let slugExists = await prisma.genre.findFirst({ where: { slug } });
+    let counter = 1;
+    while (slugExists) {
+      slug = generateSlug(`${name}-${counter}`);
+      slugExists = await prisma.genre.findFirst({ where: { slug } });
+      counter++;
+    }
 
     // Create genre
-    const genre = await GenreModel.create({
-      name,
-      slug,
-      description: description || undefined,
+    const genre = await prisma.genre.create({
+      data: { name, slug },
     });
 
     // Revalidate pages
@@ -196,10 +239,11 @@ export async function createGenreRHF(
       };
     }
 
-    const { name, description } = validationResult.data;
+    const { name } = validationResult.data;
 
     // Check if genre name already exists
-    if (await GenreModel.existsByName(name)) {
+    const exists = await prisma.genre.findFirst({ where: { name } });
+    if (exists) {
       return {
         success: false,
         message: "Genre dengan nama tersebut sudah ada",
@@ -208,13 +252,18 @@ export async function createGenreRHF(
     }
 
     // Generate unique slug
-    const slug = await GenreModel.generateUniqueSlug(name);
+    let slug = generateSlug(name);
+    let slugExists = await prisma.genre.findFirst({ where: { slug } });
+    let counter = 1;
+    while (slugExists) {
+      slug = generateSlug(`${name}-${counter}`);
+      slugExists = await prisma.genre.findFirst({ where: { slug } });
+      counter++;
+    }
 
     // Create genre
-    const genre = await GenreModel.create({
-      name,
-      slug,
-      description: description || undefined,
+    const genre = await prisma.genre.create({
+      data: { name, slug },
     });
 
     // Revalidate pages
@@ -252,7 +301,7 @@ export async function updateGenre(
     }
 
     // Check if genre exists
-    const existingGenre = await GenreModel.findById(id);
+    const existingGenre = await prisma.genre.findUnique({ where: { id } });
     if (!existingGenre) {
       return {
         success: false,
@@ -263,7 +312,6 @@ export async function updateGenre(
     // Extract form data
     const rawData = {
       name: formData.get("name")?.toString() || "",
-      description: formData.get("description")?.toString() || "",
     };
 
     // Validate with Zod
@@ -284,10 +332,13 @@ export async function updateGenre(
       };
     }
 
-    const { name, description } = validationResult.data;
+    const { name } = validationResult.data;
 
     // Check if genre name already exists (excluding current genre)
-    if (await GenreModel.existsByName(name, id)) {
+    const exists = await prisma.genre.findFirst({
+      where: { name, NOT: { id } },
+    });
+    if (exists) {
       return {
         success: false,
         message: "Genre dengan nama tersebut sudah ada",
@@ -298,14 +349,25 @@ export async function updateGenre(
     // Generate new slug if name changed
     let slug = existingGenre.slug;
     if (name !== existingGenre.name) {
-      slug = await GenreModel.generateUniqueSlug(name, id);
+      let newSlug = generateSlug(name);
+      let slugExists = await prisma.genre.findFirst({
+        where: { slug: newSlug, NOT: { id } },
+      });
+      let counter = 1;
+      while (slugExists) {
+        newSlug = generateSlug(`${name}-${counter}`);
+        slugExists = await prisma.genre.findFirst({
+          where: { slug: newSlug, NOT: { id } },
+        });
+        counter++;
+      }
+      slug = newSlug;
     }
 
     // Update genre
-    const updatedGenre = await GenreModel.update(id, {
-      name,
-      slug,
-      description: description || undefined,
+    const updatedGenre = await prisma.genre.update({
+      where: { id },
+      data: { name, slug },
     });
 
     // Revalidate pages
@@ -344,7 +406,7 @@ export async function updateGenreRHF(
     }
 
     // Check if genre exists
-    const existingGenre = await GenreModel.findById(id);
+    const existingGenre = await prisma.genre.findUnique({ where: { id } });
     if (!existingGenre) {
       return {
         success: false,
@@ -370,10 +432,13 @@ export async function updateGenreRHF(
       };
     }
 
-    const { name, description } = validationResult.data;
+    const { name } = validationResult.data;
 
     // Check if genre name already exists (excluding current genre)
-    if (await GenreModel.existsByName(name, id)) {
+    const exists = await prisma.genre.findFirst({
+      where: { name, NOT: { id } },
+    });
+    if (exists) {
       return {
         success: false,
         message: "Genre dengan nama tersebut sudah ada",
@@ -384,14 +449,25 @@ export async function updateGenreRHF(
     // Generate new slug if name changed
     let slug = existingGenre.slug;
     if (name !== existingGenre.name) {
-      slug = await GenreModel.generateUniqueSlug(name, id);
+      let newSlug = generateSlug(name);
+      let slugExists = await prisma.genre.findFirst({
+        where: { slug: newSlug, NOT: { id } },
+      });
+      let counter = 1;
+      while (slugExists) {
+        newSlug = generateSlug(`${name}-${counter}`);
+        slugExists = await prisma.genre.findFirst({
+          where: { slug: newSlug, NOT: { id } },
+        });
+        counter++;
+      }
+      slug = newSlug;
     }
 
     // Update genre
-    const updatedGenre = await GenreModel.update(id, {
-      name,
-      slug,
-      description: description || undefined,
+    const updatedGenre = await prisma.genre.update({
+      where: { id },
+      data: { name, slug },
     });
 
     // Revalidate pages
@@ -427,7 +503,10 @@ export async function deleteGenre(id: string): Promise<ActionResponse> {
     }
 
     // Check if genre exists
-    const existingGenre = await GenreModel.findById(id);
+    const existingGenre = await prisma.genre.findUnique({
+      where: { id },
+      include: { _count: { select: { animes: true } } },
+    });
     if (!existingGenre) {
       return {
         success: false,
@@ -444,7 +523,7 @@ export async function deleteGenre(id: string): Promise<ActionResponse> {
     }
 
     // Delete genre
-    const deletedGenre = await GenreModel.delete(id);
+    const deletedGenre = await prisma.genre.delete({ where: { id } });
 
     // Revalidate pages
     revalidatePath("/admin/genre");
